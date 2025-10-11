@@ -20,7 +20,6 @@ pipeline {
 
         stage('Setup environment') {
             steps {
-                sh 'apt install -y make'
                 sh 'make install'
             }
         }
