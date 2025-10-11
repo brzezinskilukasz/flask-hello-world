@@ -1,6 +1,7 @@
 # Variables
 APP_NAME := flask-hello-world
 DOCKER_IMAGE := $(APP_NAME):latest
+IMAGE_REGISTRY := localhost:5000
 
 # Application commands
 # Install dependencies
@@ -34,6 +35,10 @@ clean:
 test:
 	@echo "🧪 Running tests..."
 	PYTHONPATH=src python -m unittest discover -s tests
+
+push-image:
+	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(DOCKER_IMAGE)
+	docker push $(IMAGE_REGISTRY)/$(DOCKER_IMAGE)
 
 
 # Helm commands

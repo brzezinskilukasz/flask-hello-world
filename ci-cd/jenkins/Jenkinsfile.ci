@@ -38,13 +38,13 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                sh 'echo "Building Docker image ${REPO}:${TAG}"'
+                sh 'make build'
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                sh 'echo "Pushing Docker image to ${REPO}:${TAG}"'
+                sh 'make push-image'
             }
         }
     }
