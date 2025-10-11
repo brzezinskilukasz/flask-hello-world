@@ -20,6 +20,7 @@ pipeline {
 
         stage('Prepare environment') {
             steps {
+                sh 'sudo apt update && sudo apt install -y make'
                 sh 'make install'
             }
         }
