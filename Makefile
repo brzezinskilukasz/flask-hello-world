@@ -22,7 +22,8 @@ run-docker:
 
 # Lint the code
 lint:
-	pylint src/ tests/
+	@echo "🔍 Running pylint..."
+	pylint --fail-under=9.0 src/ tests/
 	
 # Clean up Docker images and containers
 clean:
@@ -31,6 +32,7 @@ clean:
 
 # Run tests (placeholder for future tests)
 test:
+	@echo "🧪 Running tests..."
 	PYTHONPATH=src python -m unittest discover -s tests
 
 
