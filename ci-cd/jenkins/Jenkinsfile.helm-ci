@@ -1,7 +1,7 @@
 pipeline {
     agent { label 'cloud-helm'}
     environment {
-        REPO = 'oci://localhost:5000/helm'
+        HELM_REGISTRY = 'oci://host.docker.internal:5000/helm'
     }
 
     options {
@@ -31,7 +31,7 @@ pipeline {
 
         stage('Push Helm Chart') {
             steps {
-                sh 'make helm-push'
+                sh 'make helm-push HELM_REGISTRY=${HELM_REGISTRY}'
             }
         }
     }
