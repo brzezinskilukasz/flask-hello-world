@@ -1,0 +1,38 @@
+pipeline {
+    agent { label 'cloud-helm'}
+    environment {
+        REPO = 'oci://localhost:5000/helm'
+    }
+
+    options {
+        timestamps()
+        timeout(time: 5, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Run Linting') {
+            steps {
+                sh 'make helm-lint'
+            }
+        }
+
+        stage('Package Helm Chart') {
+            steps {
+                sh 'make helm-package'
+            }
+        }
+
+        stage('Push Helm Chart') {
+            steps {
+                sh 'make helm-push'
+            }
+        }
+    }
+}

@@ -1,7 +1,10 @@
 # Variables
 APP_NAME := flask-hello-world
-DOCKER_IMAGE := $(APP_NAME):latest
 IMAGE_REGISTRY := localhost:5000
+HELM_REGISTRY := oci://localhost:5000/helm
+GIT_COMMIT := $(shell git rev-parse --short HEAD)
+GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
+DOCKER_IMAGE := $(APP_NAME):$(GIT_BRANCH)-$(GIT_COMMIT)
 
 # Application commands
 # Install dependencies
@@ -15,6 +18,7 @@ run:
 
 # Build the Docker image
 build:
+	@echo "🐳 Building Docker image $(DOCKER_IMAGE)"
 	docker build -t $(DOCKER_IMAGE) .
 
 # Run the Docker container
@@ -37,6 +41,7 @@ test:
 	PYTHONPATH=src python -m unittest discover -s tests
 
 push-image:
+	@echo "🚀 Pushing Docker image $(DOCKER_IMAGE) to $(IMAGE_REGISTRY)"
 	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(DOCKER_IMAGE)
 	docker push $(IMAGE_REGISTRY)/$(DOCKER_IMAGE)
 
@@ -56,7 +61,12 @@ helm-template-debug:
 
 # Package the Helm chart
 helm-package:
-	helm package ./charts/flask-hello-world
+	helm package ./charts/flask-hello-world --destination ./charts/flask-hello-world/charts
+
+# Push the Helm chart to a chart repository
+helm-push:
+	@echo "Pushing Helm chart to repository..."
+	helm push ./charts/flask-hello-world/charts/*.tgz $(HELM_REGISTRY)
 
 # Install the Helm chart to the Kubernetes cluster
 helm-install:
@@ -77,3 +87,20 @@ helm-test:
 
 # Phony targets
 .PHONY: install run build run-docker lint clean test helm-lint helm-template helm-template-debug helm-package helm-install helm-upgrade helm-uninstall helm-test
+
+
+# ===================================================
+# 🧱 CI-ONLY TARGETS — Do not run locally
+# These are invoked by Jenkins pipelines only.
+# A production setup would require authentication to push images
+# thus only allowing these targets to be run in CI.
+# ===================================================
+ci-promote-preprod:
+	@echo "Promoting to preprod..."
+	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):preprod-$(GIT_COMMIT)
+	docker push $(IMAGE_REGISTRY)/$(APP_NAME):preprod-$(GIT_COMMIT)
+
+ci-promote-prod:
+	@echo "Promoting to prod..."
+	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):prod-$(GIT_COMMIT)
+	docker push $(IMAGE_REGISTRY)/$(APP_NAME):prod-$(GIT_COMMIT)
