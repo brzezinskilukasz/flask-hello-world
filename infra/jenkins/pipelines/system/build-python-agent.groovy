@@ -3,19 +3,43 @@ def registry = 'localhost:5000'
 def imageName = 'jenkins/inbound-agent'
 def imageTag = 'jdk17-helm-make'
 
-load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
-
 pipeline {
     agent any
+
+    options {
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+
     stages {
         stage('Build and Push Python Agent') {
             steps {
-                build job: 'pipelines/templates/build-agent-template', parameters: [
-                    string(name: 'DOCKERFILE', value: dockerfile),
-                    string(name: 'IMAGE_NAME', value: imageName),
-                    string(name: 'IMAGE_TAG', value: imageTag),
-                    string(name: 'REGISTRY', value: registry)
-                ]
+                def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
+
+                // Use Jenkins credentials to log in to the Docker registry
+                withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    agentBuilder.loginToDockerRegistry(
+                        registry: registry,
+                        username: env.DOCKER_USERNAME,
+                        password: env.DOCKER_PASSWORD
+                    )
+                }
+
+                // Build the Docker image using the specified Dockerfile
+                agentBuilder.buildAgentImage(
+                    imageName: imageName,
+                    dockerfilePath: "infra/jenkins/agents/${dockerfile}",
+                    imageTag: imageTag
+                )
+
+                // Push the Docker image to the specified registry
+                agentBuilder.pushAgentImage(
+                    imageName: imageName,
+                    imageTag: imageTag,
+                    registry: registry
+                )
+
             }
         }
     }
