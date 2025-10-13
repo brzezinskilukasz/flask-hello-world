@@ -30,7 +30,7 @@ pipeline {
                     // Build the Docker image using the specified Dockerfile
                     agentBuilder.buildAgentImage(
                         imageName: imageName,
-                        dockerfilePath: "infra/jenkins/agents/${dockerfile}",
+                        dockerfilePath: "infra/jenkins/agent-images/${dockerfile}",
                         imageTag: imageTag
                     )
 
