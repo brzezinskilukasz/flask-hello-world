@@ -15,31 +15,32 @@ pipeline {
     stages {
         stage('Build and Push Python Agent') {
             steps {
-                def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
+                script {
+                    def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
 
-                // Use Jenkins credentials to log in to the Docker registry
-                withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
-                    agentBuilder.loginToDockerRegistry(
-                        registry: registry,
-                        username: env.DOCKER_USERNAME,
-                        password: env.DOCKER_PASSWORD
+                    // Use Jenkins credentials to log in to the Docker registry
+                    withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        agentBuilder.loginToDockerRegistry(
+                            registry: registry,
+                            username: env.DOCKER_USERNAME,
+                            password: env.DOCKER_PASSWORD
+                        )
+                    }
+
+                    // Build the Docker image using the specified Dockerfile
+                    agentBuilder.buildAgentImage(
+                        imageName: imageName,
+                        dockerfilePath: "infra/jenkins/agents/${dockerfile}",
+                        imageTag: imageTag
+                    )
+
+                    // Push the Docker image to the specified registry
+                    agentBuilder.pushAgentImage(
+                        imageName: imageName,
+                        imageTag: imageTag,
+                        registry: registry
                     )
                 }
-
-                // Build the Docker image using the specified Dockerfile
-                agentBuilder.buildAgentImage(
-                    imageName: imageName,
-                    dockerfilePath: "infra/jenkins/agents/${dockerfile}",
-                    imageTag: imageTag
-                )
-
-                // Push the Docker image to the specified registry
-                agentBuilder.pushAgentImage(
-                    imageName: imageName,
-                    imageTag: imageTag,
-                    registry: registry
-                )
-
             }
         }
     }
