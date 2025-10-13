@@ -85,4 +85,14 @@ def pushAgentImage(Map args = [:]) {
     }
 }
 
+// Combined function to login, build, and push the agent image
+// This could be used to reduce boilerplate in Jenkinsfiles
+// However it adds another layer of abstraction that might reduce clarity
+// Therefore for this project a decision was made to use the individual functions
+def loginBuildAndPushAgent(Map args = [:]) {
+    loginToDockerRegistry(args)
+    buildAgentImage(args)
+    pushAgentImage(args)
+}
+
 return this

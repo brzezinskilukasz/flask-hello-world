@@ -1,7 +1,7 @@
-def dockerfile = 'Dockerfile.build-python3-make'
+def dockerfile = 'Dockerfile.build-helm-make'
 def registry = 'localhost:5000'
 def imageName = 'jenkins/inbound-agent'
-def imageTag = 'jdk17-python-make'
+def imageTag = 'jdk17-helm-make'
 
 pipeline {
     agent { label 'cloud-python' } // Use an agent with Docker installed (for production, consider using a dedicated Docker agent)
