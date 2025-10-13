@@ -4,7 +4,7 @@ def imageName = 'jenkins/inbound-agent'
 def imageTag = 'jdk17-helm-make'
 
 pipeline {
-    agent any
+    agent { label 'cloud-python' } // Use an agent with Docker installed (for production, consider using a dedicated Docker agent)
 
     options {
         timestamps()
