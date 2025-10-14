@@ -1,0 +1,222 @@
+configuration-as-code: {}
+# credentials:
+#   system:
+#     domainCredentials:
+#     - credentials:
+#       - usernamePassword:
+#           description: "Credentials for docker registry"
+#           id: "docker-registry-credentials"
+#           password: "{AQAAABAAAAAglpnQKK/KRCsL3pXghaiLPUZWQIEXVOl9OH4Oam3I2lpN8NdethGMq9tmOeL0mORu}"
+#           scope: GLOBAL
+#           username: "docker-registry-user"
+#           usernameSecret: true
+#       domain: {}
+
+jenkins:
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+  clouds:
+  - docker:
+      dockerApi:
+        connectTimeout: 60
+        dockerHost:
+          uri: "unix:///var/run/docker.sock"
+        readTimeout: 60
+      name: "docker-agent"
+      templates:
+      - connector: "attach"
+        dockerTemplateBase:
+          cpuPeriod: 0
+          cpuQuota: 0
+          image: "localhost:5000/jenkins/inbound-agent:jdk17-python-make"
+          mounts:
+          - "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+          mountsString: "type=bind,source=/var/run/docker.sock,target=/var/run/docker.sock"
+        labelString: "cloud-python"
+        name: "python-cloud-agent"
+        pullStrategy: PULL_ALWAYS
+        pullTimeout: 300
+      - connector: "attach"
+        dockerTemplateBase:
+          cpuPeriod: 0
+          cpuQuota: 0
+          image: "localhost:5000/jenkins/inbound-agent:jdk17-helm-make"
+        labelString: "cloud-helm"
+        name: "helm-cloud-agent"
+        pullStrategy: PULL_ALWAYS
+        pullTimeout: 300
+  crumbIssuer:
+    standard:
+      excludeClientIPFromCrumb: false
+  disableRememberMe: false
+  labelAtoms:
+  - name: "built-in"
+  - name: "cloud-helm"
+  - name: "cloud-python"
+  log: {}
+  markupFormatter: "plainText"
+  mode: EXCLUSIVE
+  nodeMonitors:
+  - "architecture"
+  - "clock"
+  - diskSpace:
+      freeSpaceThreshold: "1GiB"
+      freeSpaceWarningThreshold: "2GiB"
+  - "swapSpace"
+  - tmpSpace:
+      freeSpaceThreshold: "1GiB"
+      freeSpaceWarningThreshold: "2GiB"
+  - "responseTime"
+  numExecutors: 2
+  primaryView:
+    all:
+      name: "all"
+  projectNamingStrategy: "standard"
+  quietPeriod: 5
+  remotingSecurity:
+    enabled: true
+  scmCheckoutRetryCount: 0
+  securityRealm:
+    local:
+      allowsSignup: false
+      enableCaptcha: false
+      users:
+      - id: "devops"
+        name: "DevOps Engineer"
+        properties:
+        - theme:
+            theme: "noOp"
+        - "consoleUrlProvider"
+        - "viewsTabBar"
+        - myView:
+            viewsTabBar: "standard"
+        - preferredProvider:
+            providerId: "default"
+        - "timezone"
+        - "experimentalFlags"
+        - mailer:
+            emailAddress: "devops@engineer.com"
+        - "apiToken"
+  slaveAgentPort: 50000
+  updateCenter:
+    sites:
+    - id: "default"
+      url: "https://updates.jenkins.io/update-center.json"
+  views:
+  - all:
+      name: "all"
+  viewsTabBar: "standard"
+globalCredentialsConfiguration:
+  configuration:
+    providerFilter: "none"
+    typeFilter: "none"
+appearance:
+  consoleUrlProvider: {}
+  coverage:
+    defaultMetric: LINE
+    defaultName: "Coverage"
+    enableColumnByDefault: true
+  pipelineGraphView:
+    showGraphOnBuildPage: false
+    showGraphOnJobPage: false
+    showStageDurations: false
+    showStageNames: false
+  prism:
+    theme: PRISM
+  themeManager:
+    disableUserThemes: false
+    theme: "noOp"
+security:
+  apiToken:
+    creationOfLegacyTokenEnabled: false
+    tokenGenerationOnCreationEnabled: false
+    usageStatisticsEnabled: true
+  apiTokenProperty: {}
+  cps:
+    hideSandbox: false
+  crumb: {}
+  gitHooks:
+    allowedOnAgents: false
+    allowedOnController: false
+  gitHostKeyVerificationConfiguration:
+    sshHostKeyVerificationStrategy: "knownHostsFileVerificationStrategy"
+  prism: {}
+  queueItemAuthenticator: {}
+  scriptApproval:
+    forceSandbox: false
+  updateSiteWarningsConfiguration: {}
+unclassified:
+  administrativeMonitorsConfiguration: {}
+  artifactManager: {}
+  buildDiscarders:
+    configuredBuildDiscarders:
+    - "jobBuildDiscarder"
+  buildStepOperation:
+    enabled: false
+  builtInNode: {}
+  casCGlobalConfig: {}
+  computerRetentionCheckInterval: {}
+  defaultDisplayUrlProvider: {}
+  defaultFolderConfiguration: {}
+  defaultView: {}
+  envVarsFilter: {}
+  fingerprints:
+    fingerprintCleanupDisabled: false
+    storage: "file"
+  gitHubConfiguration:
+    apiRateLimitChecker: ThrottleForNormalize
+  gitHubPluginConfig:
+    hookUrl: "http://localhost:8080/github-webhook/"
+  globalDefaultFlowDurabilityLevel: {}
+  globalLibraries: {}
+  globalTimeOutConfiguration:
+    operations:
+    - "abortOperation"
+    overwriteable: false
+  globalUntrustedLibraries: {}
+  junitTestResultStorage:
+    storage: "file"
+  location:
+    # adminAddress: "adres jeszcze nie jest skonfigurowany <nobody@nowhere>"
+    url: "http://localhost:8080/"
+  mailer:
+    charset: "UTF-8"
+    useSsl: false
+    useTls: false
+  metricsAccessKey: {}
+  myView: {}
+  nodeProperties: {}
+  pipeline-model-docker: {}
+  plugin: {}
+  pollSCM:
+    pollingThreadCount: 10
+  projectNamingStrategy: {}
+  proxyConfigurationManager: {}
+  quietPeriod: {}
+  resourceRoot: {}
+  scmGit:
+    addGitTagAction: false
+    allowSecondFetch: false
+    createAccountBasedOnEmail: false
+    disableGitToolChooser: false
+    hideCredentials: false
+    showEntireCommitSummaryInChanges: false
+    useExistingAccountWithSameEmail: false
+  scmRetryCount: {}
+  shell: {}
+  singleConditionalBuilder: {}
+  timestamper:
+    allPipelines: false
+    elapsedTimeFormat: "'<b>'HH:mm:ss.S'</b> '"
+    systemTimeFormat: "'<b>'HH:mm:ss'</b> '"
+  usageStatistics: {}
+  viewsTabBar: {}
+tool:
+  git:
+    installations:
+    - home: "git"
+      name: "Default"
+  mavenGlobalConfig:
+    globalSettingsProvider: "standard"
+    settingsProvider: "standard"

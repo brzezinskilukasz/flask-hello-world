@@ -2,6 +2,8 @@ def dockerfile = 'Dockerfile.build-helm-make'
 def registry = 'localhost:5000'
 def imageName = 'jenkins/inbound-agent'
 def imageTag = 'jdk17-helm-make'
+def registryCredentialsId = 'docker-registry-credentials'
+
 
 pipeline {
     agent { label 'cloud-python' } // Use an agent with Docker installed (for production, consider using a dedicated Docker agent)
@@ -19,7 +21,7 @@ pipeline {
                     def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
 
                     // Use Jenkins credentials to log in to the Docker registry
-                    withCredentials([usernamePassword(credentialsId: 'docker-registry-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: ${registryCredentialsId}, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         agentBuilder.loginToDockerRegistry(
                             registry: registry,
                             username: env.DOCKER_USERNAME,

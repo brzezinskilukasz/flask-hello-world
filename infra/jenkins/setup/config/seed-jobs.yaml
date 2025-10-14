@@ -1,0 +1,18 @@
+jobs:
+- script: >
+    pipelineJob('Seed Jobs') {
+      description('Job to seed other jobs using Job DSL scripts.')
+
+      definition {
+          cpsScm {
+              scm {
+                  git {
+                      remote {
+                          url('https://github.com/brzezinskilukasz/flask-hello-world.git')
+                          // credentials('github-credentials') // Use Jenkins credentials for GitHub access if needed
+                      }
+                      branches('jenkins-ci')
+                  }
+              }
+          }
+          scriptPath('infra/jenkins/setup/jobs/seed.groovy')
