@@ -1,0 +1,2 @@
+For hosting local repository templates it is best to store them within .github/workflows folder. Otherwise the templates
+require versioning, which would only cause problems for this demonstration.
