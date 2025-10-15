@@ -1,0 +1,48 @@
+def dockerfile = 'Dockerfile.build-python3-make'
+def registry = 'localhost:5000'
+def imageName = 'jenkins/inbound-agent'
+def imageTag = 'jdk17-python-make'
+def registryCredentialsId = 'docker-registry-credentials'
+
+pipeline {
+    agent { label 'cloud-python' } // Use an agent with Docker installed (for production, consider using a dedicated Docker agent)
+
+    options {
+        timestamps()
+        timeout(time: 1, unit: 'HOURS')
+        buildDiscarder(logRotator(numToKeepStr: '3'))
+    }
+
+    stages {
+        stage('Build and Push Python Agent') {
+            steps {
+                script {
+                    def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
+
+                    // Use Jenkins credentials to log in to the Docker registry
+                    withCredentials([usernamePassword(credentialsId: "${registryCredentialsId}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        agentBuilder.loginToDockerRegistry(
+                            registry: registry,
+                            username: env.DOCKER_USERNAME,
+                            password: env.DOCKER_PASSWORD
+                        )
+                    }
+
+                    // Build the Docker image using the specified Dockerfile
+                    agentBuilder.buildAgentImage(
+                        imageName: imageName,
+                        dockerfilePath: "infra/jenkins/agent-images/${dockerfile}",
+                        imageTag: imageTag
+                    )
+
+                    // Push the Docker image to the specified registry
+                    agentBuilder.pushAgentImage(
+                        imageName: imageName,
+                        imageTag: imageTag,
+                        registry: registry
+                    )
+                }
+            }
+        }
+    }
+}

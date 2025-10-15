@@ -2,6 +2,16 @@
 A simple Flask web application that returns "Hello, World!" at the root URL.
 
 Used to demonstrate CI/CD pipelines with linting and testing.
+
+Endpoints:
+- `/` : Returns a friendly HTTP greeting.
+- `/ready` : Readiness check endpoint, returns `OK` with status 200.
+- `/health` : Health check endpoint, returns `OK` with status 200 if healthy, otherwise `Service Unhealthy` with status 500.
+- `/kill` : Simulates service failure by marking the service as unhealthy.
+- `/revive` : Revives the service by marking it as healthy again.
+
+Global Variables:
+- `healthy` : A boolean flag to simulate the health status of the service.
 """
 
 from flask import Flask
@@ -30,6 +40,7 @@ def health_check():
         return 'Service Unhealthy', 500
     return 'OK', 200
 
+
 @app.route('/kill')
 def kill_service():
     """Kill the service."""
@@ -40,6 +51,7 @@ def kill_service():
 
     healthy = False
     return 'Ouch', 200
+
 
 @app.route('/revive')
 def revive_service():
