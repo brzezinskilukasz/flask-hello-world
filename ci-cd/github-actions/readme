@@ -1,2 +1,4 @@
 For hosting local repository templates it is best to store them within .github/workflows folder. Otherwise the templates
-require versioning, which would only cause problems for this demonstration.
+require versioning, which would only cause problems for this demonstration. Also the templates must live flat the in the
+workflows folder. This is a problem for organizing pipelines. However in the real production environment a separate repository hosting all of the templates should be initialized, which shoud allow to freely organize the templates files.
+For clairy in this demo the template files were prefixed with 'template-*'

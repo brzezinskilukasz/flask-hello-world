@@ -11,6 +11,6 @@ on:
 
 jobs:
   ci:
-    uses: ./.github/workflows/templates/app-ci.yaml
+    uses: ./.github/workflows/template-app-ci.yaml
     with:
       python-version: '3.11'
