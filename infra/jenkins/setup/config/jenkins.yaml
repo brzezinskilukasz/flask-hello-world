@@ -179,7 +179,7 @@ unclassified:
   junitTestResultStorage:
     storage: "file"
   location:
-    # adminAddress: "adres jeszcze nie jest skonfigurowany <nobody@nowhere>"
+    # adminAddress: "address not yet configured <nobody@nowhere>"
     url: "http://localhost:8080/"
   mailer:
     charset: "UTF-8"
