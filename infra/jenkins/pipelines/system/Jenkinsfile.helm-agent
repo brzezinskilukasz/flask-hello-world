@@ -21,7 +21,7 @@ pipeline {
                     def agentBuilder = load 'infra/jenkins/pipelines/templates/build-agent-template.groovy'
 
                     // Use Jenkins credentials to log in to the Docker registry
-                    withCredentials([usernamePassword(credentialsId: ${registryCredentialsId}, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                    withCredentials([usernamePassword(credentialsId: "${registryCredentialsId}", usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
                         agentBuilder.loginToDockerRegistry(
                             registry: registry,
                             username: env.DOCKER_USERNAME,

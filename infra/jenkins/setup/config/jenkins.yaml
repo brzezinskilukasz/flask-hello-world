@@ -84,20 +84,21 @@ jenkins:
       users:
       - id: "devops"
         name: "DevOps Engineer"
-        properties:
-        - theme:
-            theme: "noOp"
-        - "consoleUrlProvider"
-        - "viewsTabBar"
-        - myView:
-            viewsTabBar: "standard"
-        - preferredProvider:
-            providerId: "default"
-        - "timezone"
-        - "experimentalFlags"
-        - mailer:
-            emailAddress: "devops@engineer.com"
-        - "apiToken"
+        password: "devops"
+        # properties:
+        # - theme:
+        #     theme: "noOp"
+        # - "consoleUrlProvider"
+        # - "viewsTabBar"
+        # - myView:
+        #     viewsTabBar: "standard"
+        # - preferredProvider:
+        #     providerId: "default"
+        # - "timezone"
+        # - "experimentalFlags"
+        # - mailer:
+        #     emailAddress: "devops@engineer.com"
+        # - "apiToken"
   slaveAgentPort: 50000
   updateCenter:
     sites:
