@@ -1,0 +1,32 @@
+on: 
+  workflow_call: # represent a reusable workflow - can only be used as a template
+    inputs:        # parameters
+      python-version:
+        description: 'Python version to use'
+        required: false
+        default: '3.11'
+
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ inputs.python-version }}
+
+      - name: Install dependencies
+        run: make install
+
+      - name: Lint code
+        run: make lint
+
+      - name: Run tests
+        run: make test
+
+      - name: Build Docker image
+        run: make build

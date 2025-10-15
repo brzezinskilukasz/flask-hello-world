@@ -1,0 +1,16 @@
+name: flask-hello-world-ci
+
+on:
+  push:
+    # branches:   # leaving push: empty will trigger on pushes to any branch
+    #   - '**'
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/*'
+
+jobs:
+  ci:
+    uses: ./ci-cd/github-actions/templates/app-ci.yaml
+    with:
+      python-version: '3.11'
