@@ -75,3 +75,5 @@ jobs:
 
       - name: Promote image to preprod
         run: make ci-promote-preprod IMAGE_REGISTRY=${{ env.docker-registry-url }}
+
+        # comment to trigger pipeline
