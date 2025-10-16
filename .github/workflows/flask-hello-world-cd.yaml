@@ -1,11 +1,12 @@
 name: flask-hello-world-cd
 
 on:
-  workflow_dispatch:
+  # workflow_dispatch:
   push:
     branches:
       - 'main'
       - 'release/*'
+      - 'github-actions'
     paths:
       - src/**
       - tests/**
