@@ -14,16 +14,60 @@ on:
       - .github/workflows/template-app-ci.yaml # remove this later
       - .github/workflows/template-app-cd.yaml # remove this later
 
+env:
+  python-version: '3.11'
+  docker-registry-url: ghcr.io/${{ github.repository_owner }}
+
 jobs:
   ci:
     uses: ./.github/workflows/template-app-ci.yaml
     with:
-      python-version: '3.11'
-      docker-registry-url: ghcr.io/${{ github.repository_owner }}
+      python-version: ${{ env.python-version }}
+      docker-registry-url: ${{ env.docker-registry-url }}
 
-  cd:
+  # we dont template this as its very specific to this app
+  # if it is standardize across organization it must be templated
+  # otherwise it should be templated to keep the pipeline clean
+  smoke-test-preprod:
     needs: ci
     runs-on: ubuntu-latest
     steps:
-      - name: Deploying application
-        run: echo "Deploying application..."
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up python environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.python-version }}
+
+      - name: Install smoke-test dependencies
+        run: pip install -r ci-cd/scripts/requirements.txt
+
+      - name: Pull application image from registry
+        run: docker pull $(make print-image-name IMAGE_REGISTRY=${{ env.docker-registry-url }})
+
+      - name: Run application container
+        run: |
+          docker run -d -p 5000:5000 --name flask-hello-world --rm $(make print-image-name IMAGE_REGISTRY=${{ env.docker-registry-url }})
+          # wait for a few seconds to ensure the container is up and running
+          sleep 10
+
+      - name: Run smoke tests
+        run: python ci-cd/scripts/smoke_test.py
+
+      # we don't need any cleanup as this is an ephemeral agent
+      # - name: Cleanup
+      #   run: some cleanup steps
+
+  promote-to-preprod:
+    needs: smoke-test-preprod
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Pull application image from registry
+        run: docker pull $(make print-image-name IMAGE_REGISTRY=${{ env.docker-registry-url }})
+
+      - name: Promote image to preprod
+        run: make ci-promote-preprod IMAGE_REGISTRY=${{ env.docker-registry-url }}
