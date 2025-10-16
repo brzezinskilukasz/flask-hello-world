@@ -11,6 +11,8 @@ on:
       - src/**
       - tests/**
       - .github/workflows/flask-hello-world-cd.yaml
+      - .github/workflows/template-app-ci.yaml # remove this later
+      - .github/workflows/template-app-cd.yaml # remove this later
 
 jobs:
   ci:

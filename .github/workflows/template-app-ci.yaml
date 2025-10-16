@@ -67,6 +67,4 @@ jobs:
           github.ref == 'refs/heads/main' ||
           startsWith(github.ref, 'refs/heads/release/') ||
           github.ref == 'refs/heads/github-actions'
-        env:
-          IMAGE_REGISTRY: ${{ inputs.docker-registry-url }}
-        run: make push-image
+        run: make push-image IMAGE_REGISTRY=${{ inputs.docker-registry-url }}
