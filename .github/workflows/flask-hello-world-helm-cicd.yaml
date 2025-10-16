@@ -2,9 +2,9 @@ name: flask-hello-world-helm-cicd
 
 on:
   push:
-    - branches:
-        - 'main'
-        - 'release/*'
+    branches:
+      - 'main'
+      - 'release/*'
   pull_request:
     branches:
       - 'main'
