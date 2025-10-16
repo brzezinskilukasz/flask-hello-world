@@ -100,16 +100,16 @@ helm-test:
 # ===================================================
 ci-promote-preprod:
 	@echo "Promoting to preprod..."
-	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):preprod-$(GIT_COMMIT)
+	docker tag $(IMAGE_REGISTRY)/$(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):preprod-$(GIT_COMMIT)
 	docker push $(IMAGE_REGISTRY)/$(APP_NAME):preprod-$(GIT_COMMIT)
 
-	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):preprod
+	docker tag $(IMAGE_REGISTRY)/$(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):preprod
 	docker push $(IMAGE_REGISTRY)/$(APP_NAME):preprod
 
 ci-promote-prod:
 	@echo "Promoting to prod..."
-	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):prod-$(GIT_COMMIT)
+	docker tag $(IMAGE_REGISTRY)/$(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):prod-$(GIT_COMMIT)
 	docker push $(IMAGE_REGISTRY)/$(APP_NAME):prod-$(GIT_COMMIT)
 
-	docker tag $(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):prod
+	docker tag $(IMAGE_REGISTRY)/$(DOCKER_IMAGE) $(IMAGE_REGISTRY)/$(APP_NAME):prod
 	docker push $(IMAGE_REGISTRY)/$(APP_NAME):prod
