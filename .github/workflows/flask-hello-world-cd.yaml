@@ -27,6 +27,7 @@ jobs:
       python-version: '3.11'
       docker-registry-url: ghcr.io/${{ github.repository_owner }}
 
+
   # we dont template this as its very specific to this app
   # if it is standardize across organization it must be templated
   # otherwise it should be templated to keep the pipeline clean
@@ -55,11 +56,12 @@ jobs:
           sleep 10
 
       - name: Run smoke tests
-        run: python ci-cd/scripts/smoke_test.py
+        run: python ci-cd/scripts/http_smoke_tests.py
 
       # we don't need any cleanup as this is an ephemeral agent
       # - name: Cleanup
       #   run: some cleanup steps
+
 
   promote-to-preprod:
     needs: smoke-test-preprod
