@@ -70,10 +70,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Login to Docker Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.docker-registry-url }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
       - name: Pull application image from registry
         run: docker pull $(make print-image-name IMAGE_REGISTRY=${{ env.docker-registry-url }})
 
       - name: Promote image to preprod
         run: make ci-promote-preprod IMAGE_REGISTRY=${{ env.docker-registry-url }}
-
-        # comment to trigger pipeline
