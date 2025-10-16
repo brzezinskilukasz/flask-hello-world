@@ -10,10 +10,11 @@ on:
         description: 'Helm registry username (e.g., GitHub username)'
         type: string
         required: true
-      # helm-registry-password:
-      #   description: 'Helm registry password (e.g., GitHub token)'
-      #   type: string
-      #   required: true
+      helm-registry-password:
+        description: 'Helm registry password (e.g., GitHub token). if not provided, uses GITHUB_TOKEN secret'
+        type: string
+        required: false
+        default: ${{ null }}
 
 
 jobs:
@@ -46,7 +47,10 @@ jobs:
         with:
           registry: ${{ inputs.helm-registry-url }}
           username: ${{ inputs.helm-registry-username }}
-          password: ${{ env.helm-registry-password }}
+          if ${{ inputs.helm-registry-password }}:
+            password: ${{ inputs.helm-registry-password }}
+          else:
+            password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push helm chart to GitHub Packages
         env:
