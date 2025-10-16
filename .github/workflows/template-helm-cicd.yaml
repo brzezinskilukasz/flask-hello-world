@@ -4,7 +4,7 @@ on:
       helm-registry-url:
         description: 'Helm registry URL (defaults to ghcr.io)'
         type: string
-        required: true
+        required: false
         default: 'ghcr.io'
       helm-registry-username:
         description: 'Helm registry username (e.g., GitHub username)'
