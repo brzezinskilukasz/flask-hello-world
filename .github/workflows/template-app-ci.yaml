@@ -6,6 +6,21 @@ on:
         type: string
         required: false
         default: '3.11'
+      docker-registry-url:
+        description: 'Docker registry URL (defaults to ghcr.io)'
+        type: string
+        required: false
+        default: 'ghcr.io'
+      docker-registry-username:
+        description: 'Docker registry username (e.g., GitHub username); if not provided, uses ${{ github.actor }}'
+        type: string
+        required: false
+        default: ''
+      docker-registry-password:
+        description: 'Docker registry password (e.g., GitHub token). if not provided, uses GITHUB_TOKEN secret'
+        type: string
+        required: false
+        default: ''
 
 
 jobs:
@@ -31,3 +46,27 @@ jobs:
 
       - name: Build Docker image
         run: make build
+
+      # Push the image to registry if on a push to main or release/* branch
+      # The following steps will only run if the workflow is triggered by a push to main or release/* branches
+      # These branches are protected by branch policies to ensure code quality and can  only be updated via PRs
+      - name: Login to container image registry
+        if: |
+          github.ref == 'refs/heads/main' ||
+          startsWith(github.ref, 'refs/heads/release/') ||
+          github.ref == 'refs/heads/github-actions'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.docker-registry-url }}
+          username: ${{ inputs.docker-registry-username != '' && inputs.docker-registry-username || github.actor }}
+          # if docker-registry-password is provided use it, otherwise use GITHUB_TOKEN secret
+          password: ${{ inputs.docker-registry-password != '' && inputs.docker-registry-password || secrets.GITHUB_TOKEN }}
+
+      - name: Push Docker image to registry
+        if: |
+          github.ref == 'refs/heads/main' ||
+          startsWith(github.ref, 'refs/heads/release/') ||
+          github.ref == 'refs/heads/github-actions'
+        env:
+          IMAGE_REGISTRY: ${{ inputs.docker-registry-url }}
+        run: make push-image

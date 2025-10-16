@@ -1,0 +1,26 @@
+name: flask-hello-world-cd
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+      - 'release/*'
+    paths:
+      - src/**
+      - tests/**
+      - .github/workflows/flask-hello-world-cd.yaml
+
+jobs:
+  ci:
+    uses: ./.github/workflows/template-app-ci.yaml
+    with:
+      python-version: '3.11'
+      docker-registry-url: ghcr.io/${{ github.repository_owner }}
+
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying application
+        run: echo "Deploying application..."
