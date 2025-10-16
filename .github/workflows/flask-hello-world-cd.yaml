@@ -14,6 +14,8 @@ on:
       - .github/workflows/template-app-ci.yaml # remove this later
       - .github/workflows/template-app-cd.yaml # remove this later
 
+# these cannot be used as inputs for reusable workflow
+# see lines 27 and 28
 env:
   python-version: '3.11'
   docker-registry-url: ghcr.io/${{ github.repository_owner }}
@@ -22,8 +24,8 @@ jobs:
   ci:
     uses: ./.github/workflows/template-app-ci.yaml
     with:
-      python-version: ${{ env.python-version }}
-      docker-registry-url: ${{ env.docker-registry-url }}
+      python-version: '3.11'
+      docker-registry-url: ghcr.io/${{ github.repository_owner }}
 
   # we dont template this as its very specific to this app
   # if it is standardize across organization it must be templated
