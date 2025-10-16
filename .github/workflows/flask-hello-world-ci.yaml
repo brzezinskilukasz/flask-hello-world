@@ -4,6 +4,9 @@ on:
   push:
     # branches:   # leaving push: empty will trigger on pushes to any branch
     #   - '**'
+    paths:
+      - src/**
+      - tests/**
   pull_request:
     branches:
       - 'main'

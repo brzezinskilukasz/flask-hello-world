@@ -50,6 +50,5 @@ jobs:
 
       - name: Push helm chart to GitHub Packages
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically creates this secret to use in workflows
-          HELM_REGISTRY: ghcr.io
+          HELM_REGISTRY: ${{ inputs.helm-registry-url }}
         run: make helm-push
