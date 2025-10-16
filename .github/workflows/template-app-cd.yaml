@@ -1,1 +1,2 @@
 # this will push the image registry and promote up to prod cluster
+on: workflow_call

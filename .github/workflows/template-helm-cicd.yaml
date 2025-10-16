@@ -46,7 +46,7 @@ jobs:
         with:
           registry: ${{ inputs.helm-registry-url }}
           username: ${{ inputs.helm-registry-username }}
-          password: ${{ secrets.GITHUB_TOKEN }} #${{ inputs.helm-registry-password }}
+          password: ${{ inputs.helm-registry-password }}
 
       - name: Push helm chart to GitHub Packages
         env:
