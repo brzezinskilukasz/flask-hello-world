@@ -1,0 +1,55 @@
+on: 
+  workflow_call:
+    inputs:
+      helm-registry-url:
+        description: 'Helm registry URL (defaults to ghcr.io)'
+        type: string
+        required: true
+        default: 'ghcr.io'
+      helm-registry-username:
+        description: 'Helm registry username (e.g., GitHub username)'
+        type: string
+        required: true
+      helm-registry-password:
+        description: 'Helm registry password (e.g., GitHub token)'
+        type: string
+        required: true
+
+
+jobs:
+  ci-cd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install helm
+        uses: azure/setup-helm@v4.3.0
+        # with:
+        #   version: v3.12.0 # specify the Helm version you want to install, defaults to latest
+
+      - name: Lint helm chart
+        run: make helm-lint
+
+      # Not implemented yet - figure out later
+      # - name: Test helm chart
+      #   run: make helm-test
+
+      - name: Package helm chart
+        run: make helm-package
+
+      # - name: Authenticate with GitHub Container Registry
+      #   run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io --username $GITHUB_ACTOR --password-stdin
+
+      - name: Authenticate with GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ inputs.helm-registry-url }}
+          username: ${{ inputs.helm-registry-username }}
+          password: ${{ inputs.helm-registry-password }}
+
+      - name: Push helm chart to GitHub Packages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # GitHub automatically creates this secret to use in workflows
+          HELM_REGISTRY: ghcr.io
+        run: make helm-push

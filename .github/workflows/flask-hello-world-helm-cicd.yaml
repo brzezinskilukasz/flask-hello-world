@@ -1,0 +1,18 @@
+name: flask-hello-world-helm-cicd
+
+on:
+  push:
+    # - branches:
+    #     - 'main'
+    #     - 'release/*'
+  pull_request:
+    branches:
+      - 'main'
+      - 'release/*'
+
+jobs:
+  ci-cd:
+    uses: ./.github/workflows/template-helm-cicd.yaml
+    with:
+      helm-registry-username: ${{ github.actor }}
+      helm-registry-password: ${{ secrets.GITHUB_TOKEN }}
