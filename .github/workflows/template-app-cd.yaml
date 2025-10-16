@@ -1,2 +1,9 @@
 # this will push the image registry and promote up to prod cluster
 on: workflow_call
+
+jobs:
+  cd:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploying application
+        run: echo "Deploying application..."
