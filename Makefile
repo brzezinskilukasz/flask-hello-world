@@ -1,7 +1,7 @@
 # Variables
 APP_NAME := flask-hello-world
 IMAGE_REGISTRY := localhost:5000
-HELM_REGISTRY ?= oci://localhost:5000/helm
+HELM_REGISTRY ?= localhost:5000/helm
 GIT_COMMIT := $(shell git rev-parse --short HEAD)
 GIT_BRANCH := $(shell git rev-parse --abbrev-ref HEAD)
 DOCKER_IMAGE := $(APP_NAME):$(GIT_BRANCH)-$(GIT_COMMIT)
@@ -66,7 +66,7 @@ helm-package:
 # Push the Helm chart to a chart repository
 helm-push:
 	@echo "Pushing Helm chart to repository..."
-	helm push ./charts/flask-hello-world/charts/*.tgz $(HELM_REGISTRY)
+	helm push ./charts/flask-hello-world/charts/*.tgz oci://$(HELM_REGISTRY)
 
 # Install the Helm chart to the Kubernetes cluster
 helm-install:
