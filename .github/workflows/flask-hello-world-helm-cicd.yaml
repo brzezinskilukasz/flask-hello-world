@@ -13,9 +13,8 @@ on:
 jobs:
   ci-cd:
     uses: ./.github/workflows/template-helm-cicd.yaml
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    env:
+      helm-registry-password: ${{ secrets.GITHUB_TOKEN }}
     with:
       helm-registry-url: ghcr.io/${{ github.repository_owner }}
       helm-registry-username: ${{ github.actor }}
-      helm-registry-password: ${{ secrets.GITHUB_TOKEN }}
