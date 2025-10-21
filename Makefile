@@ -64,12 +64,12 @@ helm-template-debug:
 
 # Package the Helm chart
 helm-package:
-	helm package ./charts/flask-hello-world --destination ./charts/flask-hello-world/charts
+	helm package ./charts/flask-hello-world --destination .
 
 # Push the Helm chart to a chart repository
 helm-push:
 	@echo "Pushing Helm chart to repository..."
-	helm push ./charts/flask-hello-world/charts/*.tgz oci://$(HELM_REGISTRY)
+	helm push .tgz oci://$(HELM_REGISTRY)
 
 # Install the Helm chart to the Kubernetes cluster
 helm-install:

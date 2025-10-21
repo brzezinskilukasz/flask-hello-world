@@ -4,6 +4,7 @@ metadata:
   name: {{ include "flask-hello-world.fullname" . }}
   labels:
     {{- include "flask-hello-world.labels" . | nindent 4 }}
+  namespace: {{ .Release.Namespace }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:

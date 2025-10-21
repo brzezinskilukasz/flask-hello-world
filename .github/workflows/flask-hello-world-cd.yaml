@@ -82,3 +82,29 @@ jobs:
 
       - name: Promote image to preprod
         run: make ci-promote-preprod IMAGE_REGISTRY=${{ env.docker-registry-url }}
+
+  
+  deploy-to-preprod:
+    needs: promote-to-preprod
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add flask-hello-world helm chart repo
+        run: helm repo add flask-hello-world-ghcr https://ghcr.io/${{ github.repository_owner }}/flask-hello-world
+
+      - name: Generate template for flask-hello-world in preprod namespace
+        run: helm template flask-hello-world-ghcr/flask-hello-world --namespace preprod --values ./ci-cd/values-preprod.yaml > ./tmp-manifests.yaml
+
+      - name: Set kubectl context to preprod cluster
+        run: kubectl config use-context preprod-cluster
+
+      - name: Run kube-score on generated manifests
+        run: |
+          kubectl score tmp-manifests.yaml \
+          --ignore-test pod-networkpolicy \
+          --kubernetes-version "$(kubectl version | awk -Fv '/Server Version: /{print $3}' | awk -F. '{print $1"."$2}')"
+
+      - name: Deploying flask-hello-world to preprod namespace
+        run: helm upgrade --install release-name flask-hello-world-ghcr/flask-hello-world --namespace preprod --values ./ci-cd/values-preprod.yaml

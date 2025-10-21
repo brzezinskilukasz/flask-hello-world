@@ -1,0 +1,19 @@
+image:
+  pullPolicy: Always
+  
+service:
+  type: NodePort
+  nodePort: 32500
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 256Mi
+    ephemeral-storage: 128Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+    ephemeral-storage: 128Mi
+
+testConnection:
+  enabled: false
