@@ -95,7 +95,7 @@ jobs:
       # Normally we would deploy from the Helm chart stored in the Helm registry
       # but the way ghcr.io works with OCI charts is not very user friendly yet
       - name: Generate template for flask-hello-world in preprod namespace
-        run: helm template flask-hello-world-ghcr/flask-hello-world --namespace preprod --values ./ci-cd/values-preprod.yaml > ./tmp-manifests.yaml
+        run: helm template ./charts/flask-hello-world --namespace preprod --values ./ci-cd/values-preprod.yaml > ./tmp-manifests.yaml
 
       - name: Set kubectl context to preprod cluster
         run: kubectl config use-context preprod-cluster
